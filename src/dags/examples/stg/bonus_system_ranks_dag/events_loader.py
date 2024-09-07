@@ -66,7 +66,7 @@ class EventDestRepository:
 class EventLoader:
     WF_KEY = "events_origin_to_stg_workflow"
     LAST_LOADED_ID_KEY = "last_loaded_id"
-    BATCH_LIMIT = 10000  # Batch size, 20000 is to show incremental load is applicable
+    BATCH_LIMIT = 10000  # Batch size, 10000 is to show incremental load is applicable
 
     def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
         self.pg_dest = pg_dest
@@ -76,7 +76,7 @@ class EventLoader:
         self.log = log
 
     def load_events(self):
-        # open transactopm
+        # open transacttion
         # transaction will be commited if code inside WITH will be successfully executed
         # in case of any error, rollback will be executed
         with self.pg_dest.connection() as conn:

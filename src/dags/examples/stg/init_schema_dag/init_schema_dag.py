@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
     tags=['sprint5', 'stg', 'schema', 'ddl', 'example'],  # Теги, используются для фильтрации в интерфейсе Airflow.
     is_paused_upon_creation=True  # Остановлен/запущен при появлении. Сразу запущен.
 )
-def sprint5_example_stg_init_schema_dag():
+def sprint5_init_schema_dag():
     # Создаем подключение к базе dwh.
     dwh_pg_connect = ConnectionBuilder.pg_conn("PG_WAREHOUSE_CONNECTION")
 
@@ -37,4 +37,4 @@ def sprint5_example_stg_init_schema_dag():
 
 
 # Вызываем функцию, описывающую даг.
-stg_init_schema_dag = sprint5_example_stg_init_schema_dag()  # noqa
+stg_init_schema_dag = sprint5_init_schema_dag()  # noqa

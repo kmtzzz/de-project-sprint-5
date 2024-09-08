@@ -55,7 +55,7 @@ class OrderLoader:
             i = 0
             for d in load_queue:
                 schema_name = 'stg'
-                table_name = 'ordersystem_restaurants'
+                table_name = 'ordersystem_orders'
                 self.pg_saver.save_object(conn, str(d["_id"]), d["update_ts"], d, schema_name, table_name) # pass schema and table
 
                 i += 1

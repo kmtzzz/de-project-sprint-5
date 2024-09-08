@@ -4,11 +4,11 @@ import pendulum
 from airflow.decorators import dag, task
 from lib import ConnectionBuilder
 from examples.dds.stg_to_dds_population_dag.dm_users_loader import DmUserLoader
-#from examples.dds.stg_to_dds_population_dag.dm_restaurants_loader import DmRestaurantLoader
-#from examples.dds.stg_to_dds_population_dag.dm_timestamps_loader import DmTsLoader
-#from examples.dds.stg_to_dds_population_dag.dm_products_loader import DmProductLoader
-#from examples.dds.stg_to_dds_population_dag.dm_orders_loader import DmOrderLoader
-#from examples.dds.stg_to_dds_population_dag.fct_product_sales_loader import FctProductSalesLoader
+from examples.dds.stg_to_dds_population_dag.dm_restaurants_loader import DmRestaurantLoader
+from examples.dds.stg_to_dds_population_dag.dm_timestamps_loader import DmTsLoader
+from examples.dds.stg_to_dds_population_dag.dm_products_loader import DmProductLoader
+from examples.dds.stg_to_dds_population_dag.dm_orders_loader import DmOrderLoader
+from examples.dds.stg_to_dds_population_dag.fct_product_sales_loader import FctProductSalesLoader
 
 
 log = logging.getLogger(__name__)
@@ -31,51 +31,46 @@ def sprint5_stg_to_dds_population_dag():
         dm_users_loader = DmUserLoader(dwh_pg_connect, dwh_pg_connect, log)
         dm_users_loader.load_entities()  # Call function to load data finally
     
-    # @task(task_id="dm_restaurants_load")
-    # def load_task_dm_restaurants():
-    #     # создаем экземпляр класса, в котором реализована логика.
-    #     dm_restaurants_loader = DmRestaurantLoader(dwh_pg_connect, dwh_pg_connect, log)
-    #     dm_restaurants_loader.load_dm_restaurants()  # Вызываем функцию, которая перельет данные.
+    @task(task_id="dm_restaurants_load")
+    def load_task_dm_restaurants():
+        dm_restaurants_loader = DmRestaurantLoader(dwh_pg_connect, dwh_pg_connect, log)
+        dm_restaurants_loader.load_entities()
 
-    # @task(task_id="dm_timestamps_load")
-    # def load_task_dm_timestamps():
-    #     # создаем экземпляр класса, в котором реализована логика.
-    #     dm_timestamps_loader = DmTsLoader(dwh_pg_connect, dwh_pg_connect, log)
-    #     dm_timestamps_loader.load_dm_timestamps()  # Вызываем функцию, которая перельет данные.   
+    @task(task_id="dm_timestamps_load")
+    def load_task_dm_timestamps():
+        dm_timestamps_loader = DmTsLoader(dwh_pg_connect, dwh_pg_connect, log)
+        dm_timestamps_loader.load_entities() 
 
-    # @task(task_id="dm_products_load")
-    # def load_task_dm_products():
-    #     # создаем экземпляр класса, в котором реализована логика.
-    #     dm_products_loader = DmProductLoader(dwh_pg_connect, dwh_pg_connect, log)
-    #     dm_products_loader.load_dm_products()  # Вызываем функцию, которая перельет данные.   
+    @task(task_id="dm_products_load")
+    def load_task_dm_products():
+        dm_products_loader = DmProductLoader(dwh_pg_connect, dwh_pg_connect, log)
+        dm_products_loader.load_entities()
 
-    # @task(task_id="dm_orders_load")
-    # def load_task_dm_orders():
-    #     # создаем экземпляр класса, в котором реализована логика.
-    #     dm_orders_loader = DmOrderLoader(dwh_pg_connect, dwh_pg_connect, log)
-    #     dm_orders_loader.load_dm_orders()  # Вызываем функцию, которая перельет данные.   
+    @task(task_id="dm_orders_load")
+    def load_task_dm_orders():
+        dm_orders_loader = DmOrderLoader(dwh_pg_connect, dwh_pg_connect, log)
+        dm_orders_loader.load_entities() 
 
-    # @task(task_id="fct_product_sales_load")
-    # def load_task_fct_product_sales():
-    #     # создаем экземпляр класса, в котором реализована логика.
-    #     fct_product_sales_loader = FctProductSalesLoader(dwh_pg_connect, dwh_pg_connect, log)
-    #     fct_product_sales_loader.load_fct_product_sales()  # Вызываем функцию, которая перельет данные.   
+    @task(task_id="fct_product_sales_load")
+    def load_task_fct_product_sales():
+        fct_product_sales_loader = FctProductSalesLoader(dwh_pg_connect, dwh_pg_connect, log)
+        fct_product_sales_loader.load_entities()
 
     # Initialize tasks
     dm_users_dict = load_task_dm_users()
-    # dm_restaurants_dict = load_task_dm_restaurants()
-    # dm_timestamps_dict = load_task_dm_timestamps()
-    # dm_products_dict = load_task_dm_products()
-    # dm_orders_dict = load_task_dm_orders()
-    # fct_product_sales_dict = load_task_fct_product_sales()
+    dm_restaurants_dict = load_task_dm_restaurants()
+    dm_timestamps_dict = load_task_dm_timestamps()
+    dm_products_dict = load_task_dm_products()
+    dm_orders_dict = load_task_dm_orders()
+    fct_product_sales_dict = load_task_fct_product_sales()
 
 
     # Setup sequence of tasks
-    dm_users_dict 
-    # >> dm_orders_dict
-    # dm_restaurants_dict >> dm_orders_dict
-    # dm_timestamps_dict >> dm_orders_dict
-    # dm_products_dict >> fct_product_sales_dict
-    # dm_orders_dict >> fct_product_sales_dict
+    dm_users_dict >> dm_orders_dict
+    dm_restaurants_dict >> dm_products_dict
+    dm_restaurants_dict >> dm_orders_dict
+    dm_timestamps_dict >> dm_orders_dict
+    dm_products_dict >> fct_product_sales_dict
+    dm_orders_dict >> fct_product_sales_dict
 
 stg_to_dds_dag = sprint5_stg_to_dds_population_dag()

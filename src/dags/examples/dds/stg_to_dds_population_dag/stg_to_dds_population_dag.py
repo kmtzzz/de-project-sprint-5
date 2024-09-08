@@ -14,11 +14,11 @@ from examples.dds.stg_to_dds_population_dag.fct_product_sales_loader import FctP
 log = logging.getLogger(__name__)
 
 @dag(
-    schedule_interval='0/15 * * * *',  # Задаем расписание выполнения дага - каждый 15 минут.
-    start_date=pendulum.datetime(2024, 9, 7, tz="UTC"),  # Дата начала выполнения дага. Можно поставить сегодня.
-    catchup=False,  # Нужно ли запускать даг за предыдущие периоды (с start_date до сегодня) - False (не нужно).
-    tags=['sprint5', 'dds', 'origin', 'example'],  # Теги, используются для фильтрации в интерфейсе Airflow.
-    is_paused_upon_creation=True  # Остановлен/запущен при появлении. Сразу запущен.
+    schedule_interval='0/15 * * * *',  # DAG schedule - each 15 minutes.
+    start_date=pendulum.datetime(2024, 9, 7, tz="UTC"),  # DAG start date.
+    catchup=False,  # Is it required to catchup data (since start_date till now) - False = not needed.
+    tags=['sprint5', 'dds', 'origin', 'example'], 
+    is_paused_upon_creation=True  # Paused/started on appearence.
 )
 def sprint5_stg_to_dds_population_dag():
     # Create connection to dwh database.

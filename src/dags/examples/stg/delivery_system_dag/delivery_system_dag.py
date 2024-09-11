@@ -1,6 +1,7 @@
 import pendulum
 from airflow.decorators import dag, task
 from examples.stg.delivery_system_dag.couriers_loader import CourierLoader
+from examples.stg.delivery_system_dag.deliveries_loader import DeliveryLoader
 
 from lib import ConnectionBuilder
 
@@ -17,13 +18,19 @@ def sprint5_project_stg_delivery_system():
 
     @task()
     def load_task_stg_couriers():
-        courier_obj = CourierLoader(dwh_pg_connect)
-        courier_obj.load_entities()
+        courier_entity = CourierLoader(dwh_pg_connect)
+        courier_entity.load_entities()
 
-    task_courier = load_task_stg_couriers()
+    @task()
+    def load_task_stg_deliveries():
+        delivery_entity = DeliveryLoader(dwh_pg_connect)
+        delivery_entity.load_entities()
 
+    task_couriers = load_task_stg_couriers()
+    task_deliveries = load_task_stg_deliveries()
 
-    task_courier
+    task_couriers
+    task_deliveries
 
 
 deliveries_stg_dag = sprint5_project_stg_delivery_system()  

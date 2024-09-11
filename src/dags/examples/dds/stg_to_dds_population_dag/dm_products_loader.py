@@ -144,9 +144,7 @@ class DmProductLoader:
 
             # Save objects to dwh considering SC2: close previous version date and adding new version
             for ent in load_queue:
-                print(f'{ent = }')
                 fetch_product = self.dds.get_product(conn, ent.product_id)
-                print(f'{fetch_product = }')
                 if not fetch_product:
                     self.dds.insert_entity(conn, ent)
                 elif not(fetch_product.product_name == ent.product_name and fetch_product.product_price == ent.product_price):

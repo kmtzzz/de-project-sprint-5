@@ -17,7 +17,7 @@
     stg.deliverysystem_deliveries - сырые данные из АПИ по доставкам. Новая таблица
     dds.dm_couriers - измерение курьеров. Новая таблица 
     dds.dm_deliveries - измерение доставок. Новая таблица
-    dds.fct_courier_ledger - детали доставленных заказов курьерами. Новая таблица
+    dds.fct_deliveriy_details - детали доставленных заказов курьерами. Новая таблица
     cdm.dm_courier_ledger - финальная витрина. Новая таблица
     dds.dm_orders - измерение ордеров, нужно для связки доставок с измерением timestamp. Существующая таблица
     dds.dm_timestamps - измерение timestamp. Существующая таблица

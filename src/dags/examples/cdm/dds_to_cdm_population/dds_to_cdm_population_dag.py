@@ -3,6 +3,7 @@ import logging
 import pendulum
 from airflow.decorators import dag, task
 from examples.cdm.dds_to_cdm_population.cdm_settlement_report_loader import CdmSettlementLoader
+from examples.cdm.dds_to_cdm_population.cdm_courier_ledger_loader import CdmCourierLedgerLoader
 from lib import ConnectionBuilder
 
 log = logging.getLogger(__name__)
@@ -24,9 +25,16 @@ def sprint5_dds_to_cdm_population_dag():
         cdm_settlement_report = CdmSettlementLoader(dwh_pg_connect)
         cdm_settlement_report.load_settlement_report()
 
+    @task(task_id="load_cdm_courier_ledger")
+    def load_task_cdm_courier_ledger():
+        cdm_courier_ledger = CdmCourierLedgerLoader(dwh_pg_connect)
+        cdm_courier_ledger.load_courier_ledger()
+
     cdm_settlement_report_dict = load_task_cdm_settlement_report()
+    cdm_courier_ledger_dict = load_task_cdm_courier_ledger()
 
     cdm_settlement_report_dict
+    cdm_courier_ledger_dict
 
 
 dds_to_cdm_dag = sprint5_dds_to_cdm_population_dag()

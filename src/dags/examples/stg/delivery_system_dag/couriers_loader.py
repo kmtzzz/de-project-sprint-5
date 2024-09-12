@@ -43,9 +43,8 @@ class CourierLoader:
                     """
                         INSERT INTO stg.deliverysystem_couriers(object_value, update_ts)
                         VALUES (%(object_value)s, now())
-                        ON CONFLICT (object_value) DO UPDATE
-                        SET object_value = EXCLUDED.object_value,
-                            update_ts = now()
+                        ON CONFLICT (object_value) DO nothing --UPDATE
+                        SET update_ts = now()
                     """,
                     {
                         "object_value": entity.object_value.replace("'",'"')

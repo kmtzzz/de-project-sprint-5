@@ -9,7 +9,9 @@ from examples.dds.stg_to_dds_population_dag.dm_timestamps_loader import DmTsLoad
 from examples.dds.stg_to_dds_population_dag.dm_products_loader import DmProductLoader
 from examples.dds.stg_to_dds_population_dag.dm_orders_loader import DmOrderLoader
 from examples.dds.stg_to_dds_population_dag.fct_product_sales_loader import FctProductSalesLoader
-
+from examples.dds.stg_to_dds_population_dag.dm_couriers_loader import DmCourierLoader
+from examples.dds.stg_to_dds_population_dag.dm_deliveries_loader import DmDeliveryLoader
+from examples.dds.stg_to_dds_population_dag.fct_delivery_details import FctDeliveryDtlLoader
 
 log = logging.getLogger(__name__)
 
@@ -56,6 +58,21 @@ def sprint5_stg_to_dds_population_dag():
         fct_product_sales_loader = FctProductSalesLoader(dwh_pg_connect, dwh_pg_connect, log)
         fct_product_sales_loader.load_entities()
 
+    @task(task_id="dm_couriers_load")
+    def load_task_dm_couriers():
+        dm_couriers_loader = DmCourierLoader(dwh_pg_connect, dwh_pg_connect, log)
+        dm_couriers_loader.load_entities()
+
+    @task(task_id="dm_deliveries_load")
+    def load_task_dm_deliveries():
+        dm_deliveries_loader = DmDeliveryLoader(dwh_pg_connect, dwh_pg_connect, log)
+        dm_deliveries_loader.load_entities()
+
+    @task(task_id="fct_delivery_details")
+    def load_task_fct_delivery_details():
+        fct_delivery_details_loader = FctDeliveryDtlLoader(dwh_pg_connect, dwh_pg_connect, log)
+        fct_delivery_details_loader.load_entities()
+
     # Initialize tasks
     dm_users_dict = load_task_dm_users()
     dm_restaurants_dict = load_task_dm_restaurants()
@@ -63,6 +80,9 @@ def sprint5_stg_to_dds_population_dag():
     dm_products_dict = load_task_dm_products()
     dm_orders_dict = load_task_dm_orders()
     fct_product_sales_dict = load_task_fct_product_sales()
+    dm_couriers_dict = load_task_dm_couriers()
+    dm_deliveries_dict = load_task_dm_deliveries()
+    fct_delivery_details_dict = load_task_fct_delivery_details()
 
 
     # Setup sequence of tasks
@@ -72,5 +92,8 @@ def sprint5_stg_to_dds_population_dag():
     dm_timestamps_dict >> dm_orders_dict
     dm_products_dict >> fct_product_sales_dict
     dm_orders_dict >> fct_product_sales_dict
+    dm_couriers_dict >> dm_deliveries_dict
+    dm_orders_dict >> dm_deliveries_dict
+    dm_deliveries_dict >> fct_delivery_details_dict
 
 stg_to_dds_dag = sprint5_stg_to_dds_population_dag()

@@ -1,6 +1,7 @@
 create table if not exists stg.deliverysystem_deliveries (
   id serial not null primary key,
   object_value text not null,
+  delivery_date date not null,
   update_ts timestamp NOT NULL
 );
 DO $$

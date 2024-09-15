@@ -1,9 +1,11 @@
 import pendulum
 from airflow.decorators import dag, task
+from airflow.operators.python import get_current_context
 from examples.stg.delivery_system_dag.couriers_loader import CourierLoader
 from examples.stg.delivery_system_dag.deliveries_loader import DeliveryLoader
 
 from lib import ConnectionBuilder
+
 
 
 @dag(
@@ -16,6 +18,7 @@ from lib import ConnectionBuilder
 def sprint5_project_stg_delivery_system():
     dwh_pg_connect = ConnectionBuilder.pg_conn("PG_WAREHOUSE_CONNECTION")
 
+
     @task()
     def load_task_stg_couriers():
         courier_entity = CourierLoader(dwh_pg_connect)
@@ -23,8 +26,10 @@ def sprint5_project_stg_delivery_system():
 
     @task()
     def load_task_stg_deliveries():
+        context = get_current_context()
         delivery_entity = DeliveryLoader(dwh_pg_connect)
-        delivery_entity.load_entities()
+        execution_date = context["ds"]
+        delivery_entity.load_entities(execution_date)
 
     task_couriers = load_task_stg_couriers()
     task_deliveries = load_task_stg_deliveries()

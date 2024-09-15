@@ -1,16 +1,32 @@
 from lib import PgConnect
+from datetime import date
 
 class CdmCourierLedgerLoader:
     def __init__(self, pg: PgConnect) -> None:
         self._db = pg
     
-    def load_courier_ledger(self) -> None:
+    def delete_courier_ledger(self, execution_year: int, execution_month: int ) -> None:
+        print(f'from delete_courier_ledger method {execution_year=} {execution_month=}')
         with self._db.connection() as conn:
             with conn.cursor() as cur:
                     cur.execute(
                         """
-                        delete from cdm.dm_courier_ledger;
-                        
+                        delete from cdm.dm_courier_ledger
+                         where settlement_year = %(year)s
+                           and settlement_month = %(month)s
+                         ;
+                         """,
+                    {
+                        "year": execution_year,
+                        "month": execution_month
+                    }
+                    )         
+
+    def load_courier_ledger(self, execution_year: int, execution_month: int) -> None:
+        with self._db.connection() as conn:
+            with conn.cursor() as cur:
+                    cur.execute(
+                        """
                         with courier_avg_rate as (
                         select courier_id,
                             settlement_year,
@@ -88,6 +104,12 @@ class CdmCourierLedgerLoader:
                                courier_tips_sum, 
                                courier_order_sum + courier_tips_sum * 0.95 
                          from courier_ledger_data
+                        where settlement_year = %(year)s
+                          and settlement_month = %(month)s
                          ;
-                         """
+                         """,
+                    {
+                        "year": execution_year,
+                        "month": execution_month
+                    }
                     )

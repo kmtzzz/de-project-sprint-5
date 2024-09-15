@@ -43,7 +43,7 @@ class CourierLoader:
                     """
                         INSERT INTO stg.deliverysystem_couriers(object_value, update_ts)
                         VALUES (%(object_value)s, now())
-                        ON CONFLICT (object_value) DO nothing --UPDATE
+                        ON CONFLICT (object_value) DO UPDATE
                         SET update_ts = now()
                     """,
                     {
